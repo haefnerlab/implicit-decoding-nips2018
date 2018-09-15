@@ -3,7 +3,7 @@
 
 % close all
 % clear
-N = 21; %Number of neurons
+N = 51; %Number of neurons
 stim_num = N; %Number of stimulus = number of neurons
 sig_eb = 0.1; %In NIPS paper \sigma_{exp-brain}
 pixel_noise_std = 0.5; %Pixel Noise of images (gratings)
