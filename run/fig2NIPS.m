@@ -50,7 +50,7 @@ for i=1:length(n_samples_set)
         legend(num2str(n_samples));
         hold on;
         if (n_samples == max(n_samples_set))
-            p=plot(angle,p_inf,'k--');
+            p=plot(angle,p_inf,'k-');
             p.LineWidth = 4;
             legend(num2str(n_samples),'Inf samples');
             hold on;
@@ -66,7 +66,7 @@ for i=1:length(n_samples_set)
         legend(num2str(n_samples));
         hold on;
         if (n_samples == max(n_samples_set))
-            p=plot(angle,mu_vb*n_samples,'k--');
+            p=plot(angle,mu_vb*n_samples,'k-');
             p.LineWidth = 4;
             legend(num2str(n_samples),'VB');
             hold on;

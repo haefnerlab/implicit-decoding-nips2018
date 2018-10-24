@@ -5,6 +5,6 @@ function temp =  rf(sig_x,sig_y,k,phi,x,y,rotate)
         x_t = x * cos(rotate) + y * sin(rotate);
         y_t = -x * sin(rotate) + y * cos(rotate);
         temp = temp * exp((-((x_t.*x_t)/(2*sig_x^2))-((y_t.*y_t)/(2*sig_y^2))));
-        temp = temp.*sin(k*y_t-phi);
+        temp = temp.*cos(k*y_t-phi);
         
 end

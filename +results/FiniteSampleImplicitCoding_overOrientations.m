@@ -11,14 +11,13 @@
 %Returns probability of orientation of the image(grating) shown p_inf, for
 %infinite number of samples drawn to do inference
 
-function p_fin = FiniteSampleImplicitCoding_overOrientations(Im,params,sig_eb,x_samples)
+function p_fin = FiniteSampleImplicitCoding_overOrientations(Templates,params,sig_eb,x_samples)
 size_x_samples = size(x_samples);
 n_samples = size_x_samples(2);
 var_final = ((sig_eb^2) + params.pixel_std^2/n_samples);
 p = zeros(params.n_neurons,1);
-for i=1:params.n_neurons
-%     disp(i)
-    p(i) = sum(log(normpdf(Im(:,i),params.pf*mean(squeeze(x_samples),2),sqrt(var_final))));
+for i=1:size(Templates, 2)
+    p(i) = sum(log(normpdf(Templates(:,i),params.pf*mean(squeeze(x_samples),2),sqrt(var_final))));
 end
 p_fin = exp(p - tools.logsumexp(p));
 end

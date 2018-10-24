@@ -31,5 +31,5 @@ end
 
 function temp = stm(sig_x,sig_y,k,phi,x,y,rotate)
 y_t = -x * sin(rotate) + y * cos(rotate);
-temp = sin(k*y_t);
+temp = cos(k*y_t);
 end

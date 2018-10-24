@@ -7,7 +7,7 @@ stim_num = N; %Number of stimulus = number of neurons
 sig_eb = 0.05; %In NIPS paper \sigma_{exp-brain}
 pixel_noise_std = 1.0; %Pixel Noise of images (gratings)
 prior = 0.01; %Sparse prior of spiking of neurons
-[G,pix] = tools.PFgenerator(N,0,2*pi*(N-1)/N); %generates PFs
+[G,pix] = tools.PFgenerator(N,0,pi*(N-1)/N); %generates PFs
 params = tools.ModelParams(G,N,pixel_noise_std,prior,pix); %assigns parameters for inference
 
 con = linspace(0,1,5);
@@ -17,10 +17,11 @@ for i=1:length(con)
     p_inf_cont(i,:) = results.InfiniteSampleImplicitCoding_overOrientations_contrast_test(params,sig_eb,con(i));
 end
 %% Generating the figure
-angle = linspace(0,2*pi*(N-1)/N,params.n_neurons);
+angle = linspace(0,pi*(N-1)/N,params.n_neurons);
 figure();
+colors = repmat(linspace(.8, 0, length(con))', 1, 3);
 for i=1:length(con)
-    plot(angle,p_inf_cont(i,:),'o-','LineWidth',2)
+    plot(angle,p_inf_cont(i,:),'o-','LineWidth',2,'Color',colors(i,:))
     hold on;
 end
 axis('tight')
