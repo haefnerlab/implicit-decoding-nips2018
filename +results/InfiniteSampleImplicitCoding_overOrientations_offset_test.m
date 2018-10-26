@@ -1,30 +1,35 @@
-%INFINITESAMPLEIMPLICITCODING_OVERORIENTATIONS_OFFSET_TEST is a function
-%that returns the decoded probability of an abstract variable here
-%orientation for different levels of added offset of the grating image
-%shown.
+function p_inf_offset = InfiniteSampleImplicitCoding_overOrientations_offset_test(params, sig_eb, true_off, lo, up, T)
+%INFINITESAMPLEIMPLICITCODING_OVERORIENTATIONS_OFFSET_TEST returns the decoded probability of an
+%abstract variable (here orientation) for a given level of added luminance offset
 
-function p_inf_offset = InfiniteSampleImplicitCoding_overOrientations_offset_test(params,sig_eb,dc_fix,lo,up)
-Im = tools.StimGenerator(params.n_neurons,0.0,2*pi*(params.n_neurons-1)/params.n_neurons);
+Templates = tools.StimGenerator(T, 0, pi*(T-1)/T);
+Templates = Templates - mean(Templates, 1); % Ensure that there is no 'DC' component in the templates themselves
+
 mu_vb = zeros(1,params.n_neurons);
-% angle = linspace(0,pi*(params.n_neurons-1)/params.n_neurons,params.n_neurons);
-fix_item = fix(params.n_neurons/2)+1;
+fix_item = round(T/2); % present the 'middle' template to the model
 variational_trials = 1000;
+
+% Get _expected_ mean response after 1000 noise draws added to the template at contrast 'con'
 for i=1:variational_trials
-    Im_noisy = Im(:,fix_item) + dc_fix +  sig_eb * randn(params.pixels,1);
-    mu_vb = mu_vb + tools.variational_bayes(params,Im_noisy);
+    Im_noisy = true_off + Templates(:,fix_item) + sig_eb * randn(params.pixels,1);
+    mu_vb = mu_vb + tools.variational_bayes(params, Im_noisy);
 end
-mu_vb = mu_vb/variational_trials;
-p = zeros(params.n_neurons,1);
-p_inf_offset = zeros(params.n_neurons,1);
-dc = unifrnd(lo,up,1,100);
-for j=1:100
-    for i=1:params.n_neurons
-        Im1 = Im(:,i)+ones(params.pixels,1)*dc(j);
-        p(i) = sum(log(normpdf(Im1,params.pf*mu_vb(:),(sig_eb))));  
-    end
-    p_inf_offset = p_inf_offset + exp(p - tools.logsumexp(p));
+mu_vb = mu_vb / variational_trials;
+reconstruction = params.pf*mu_vb(:);
+
+% Assume that the decoder does not have access to the true offset and that the offset itself has a
+% uniform prior in [lo up], and marginalize it out
+n_offset = 500;
+offsets = linspace(lo, up, n_offset);
+prior_contrast = ones(size(offsets)) / n_offset;
+log_prob_off_s = zeros(T, n_offset);
+for j=1:n_offset
+    template_dist = offsets(j) + Templates - reconstruction;
+    log_prob_off_s(:,j) = -sum(template_dist.^2 / sig_eb^2) / 2;
 end
-p_inf_offset = p_inf_offset/sum(p_inf_offset);
+prob_off_s = exp(log_prob_off_s - max(log_prob_off_s(:)));
+p_inf_offset = prob_off_s * prior_contrast(:);
+p_inf_offset = p_inf_offset / sum(p_inf_offset);
 end
 
 

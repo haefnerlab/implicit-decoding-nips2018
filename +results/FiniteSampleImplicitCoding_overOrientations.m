@@ -11,6 +11,7 @@
 %Returns probability of orientation of the image(grating) shown p_inf, for
 %infinite number of samples drawn to do inference
 
+% NOTE: while in general, computing p(s|x1,...,xt) 
 function p_fin = FiniteSampleImplicitCoding_overOrientations(Templates,params,sig_eb,x_samples)
 size_x_samples = size(x_samples);
 n_samples = size_x_samples(2);

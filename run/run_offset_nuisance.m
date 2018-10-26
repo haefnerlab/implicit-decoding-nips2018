@@ -1,39 +1,32 @@
 %%Code to reproduce the effect of offset as nuisance variable on decoded
 %orientation
 
-% close all
-% clear all
-N = 105;
-stim_num = N;
-sig_eb = 0.1;
-pixel_noise_std = 0.5;
-prior = 0.01;
-[G,pix] = tools.PFgenerator(N,0,2*pi*(N-1)/N);
-params = tools.ModelParams(G,N,pixel_noise_std,prior,pix);
-lo = -2;
-up = 2;
-num = 5;
-dc = linspace(lo,up,num);
-p = zeros(length(dc),N);
-parfor i=1:length(dc)
+N = 32; % Number of neurons
+T = 200; % Number of grating orientations (discretization of s)
+sig_eb = 0.1; %In NIPS paper \sigma_{exp-brain}
+pixel_noise_std = 0.5; %Pixel Noise of images (gratings)
+prior = 0.1; %Sparse prior of spiking of neurons
+[G, pix] = tools.PFgenerator(N, 0, pi*(N-1)/N); %generates PFs
+G = G - mean(G, 1); % Ensure that there is no 'DC' component in the projective fields
+params = tools.ModelParams(G, N, pixel_noise_std, prior, pix);
+
+offset = linspace(-2, 2, 5);
+p = zeros(length(offset), T);
+for i=1:length(offset)
     disp(i);
-    p(i,:) = results.InfiniteSampleImplicitCoding_overOrientations_offset_test(params,sig_eb,dc(i),lo,up);
+    p(i,:) = results.InfiniteSampleImplicitCoding_overOrientations_offset_test(params, sig_eb, offset(i), -2, 2, T);
 end
 
 %% Generate figure
-offset = linspace(lo,up,num);
-angle = linspace(0,2*pi*(N-1)/N,params.n_neurons);
+angle = linspace(0, pi, T+1);
 figure();
-for i=1:num
-    plot(angle,p(i,:),'o-','LineWidth',2)
+colors = repmat(linspace(.8, 0, length(offset))', 1, 3);
+for i=1:length(offset)
+    plot(angle,[p(i,:) p(i,1)], '-', 'LineWidth',2,'Color',colors(i,:))
     hold on;
 end
 axis('tight')
-legend(arrayfun(@(c) ['offset = ' num2str(c)], offset, 'UniformOutput', false));
+legend(arrayfun(@(o) ['offset = ' num2str(o)], offset, 'UniformOutput', false));
 % make sure this is the fix item in the infinite_Sampling code as well
-fix_item = fix(params.n_neurons/2) + 1;
-p2 = line([angle(fix_item) angle(fix_item)], [max(p(end,:)) min(p(end,:))]);
-p2.Color = [1 0 0]; 
-p2.LineWidth = 1;
 yticks([]);
-set(gca, 'XTick', sort([angle(fix_item), get(gca, 'XTick')]));
+set(gca, 'fontsize', 10,'fontweight','bold','xtick',[0 pi/4 pi/2 3*pi/4 pi],'xticklabel',{0, '\pi/4', '\pi/2', '3\pi/4', '\pi'})
