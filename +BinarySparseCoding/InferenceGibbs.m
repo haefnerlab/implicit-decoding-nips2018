@@ -1,7 +1,7 @@
 function x_samples = InferenceGibbs(params, image, n_samples, n_repeats)
-%BINARYSPARSECODING.INFERENCEGIBBS do inference in the binary sparse coding model using gibbs
-%sampling. Samples are initialized from the prior. Returns (neurons x n_samples x n_repeats) array
-%of sampled values (0s and 1s).
+% BINARYSPARSECODING.INFERENCEGIBBS do inference in the binary sparse coding model using gibbs
+% sampling. Samples are initialized from the prior. Returns (neurons x n_samples x n_repeats) array
+% of sampled values (0s and 1s).
 %
 % x_samples = BINARYSPARSECODING.INFERENCEGIBBS(params, image, samples, repeats)
 
@@ -23,13 +23,13 @@ assert(numel(image) == params.pixels);
 x_samples(:, 1, :) = rand(params.n_neurons, n_repeats) < params.prior;
 
 % Loop sequentially over samples
-for s=2:n_samples
+for s = 2:n_samples
     % Copy state s-1 to state s
     x_samples(:, s, :) = x_samples(:, s-1, :);
     
     % Loop random permutation over cells (note: this is the same random permutation per repeat due
     % to vectorization, but different for each sample)
-    for k=randperm(params.n_neurons)
+    for k = randperm(params.n_neurons)
         % Sample x_k
         idx_other = [1:k-1 k+1:params.n_neurons];
         drive = (feedforward(k) + R(k, k) / 2 + squeeze(x_samples(idx_other, s, :))' * R(idx_other, k)) / pix_var;

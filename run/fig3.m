@@ -18,8 +18,8 @@ Ax = A*x1;
 subplot(2, 3, [1 4]);
 hold on;
 plot(Tx, Ty, 'linewidth', 2, 'color', [.5 0 .5]);
-plot(0,0);
-for i=1:100:length(s)
+plot(0, 0);
+for i = 1:100:length(s)
     plot([Ax(1) Tx(i)], [Ax(2) Ty(i)], 'Color', gray2);
 end
 plot(Ax(1), Ax(2), 'o', 'Color', color2, 'MarkerFaceColor', color2);
@@ -42,8 +42,8 @@ Ax2 = A*x2;
 subplot(2, 3, [2 5]);
 hold on;
 plot(Tx, Ty, 'linewidth', 2, 'color', [.5 0 .5]);
-plot(0,0);
-for i=1:100:length(s)
+plot(0, 0);
+for i = 1:100:length(s)
     plot([Ax1(1) Tx(i)], [Ax1(2) Ty(i)], 'Color', gray1);
     plot([Ax2(1) Tx(i)], [Ax2(2) Ty(i)], 'Color', gray2);
 end
